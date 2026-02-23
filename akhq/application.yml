@@ -1,0 +1,6 @@
+akhq:
+  connections:
+    local:
+      properties:
+        # AKHQ는 컨테이너 내부에서 Kafka에 붙으니까 kafka:29092
+        bootstrap.servers: "kafka:29092"

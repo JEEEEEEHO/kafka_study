@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Kafka Study</title>
+</head>
+<body>
+<h1>UI → Producer API → Kafka → AKHQ</h1>
+
+<input id="msg" value="hello from ui" />
+<button id="btn">Send</button>
+
+<pre id="out"></pre>
+
+<script>
+    const out = document.getElementById("out");
+    document.getElementById("btn").addEventListener("click", async () => {
+        const message = document.getElementById("msg").value;
+
+        const res = await fetch("/api/send", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ type: "CLICK", message }),
+        });
+
+        const json = await res.json();
+        out.textContent = JSON.stringify(json, null, 2);
+    });
+</script>
+</body>
+</html>
