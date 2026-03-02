@@ -6,18 +6,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 public class ProduceController {
 
 	private final KafkaTemplate<String, String> kafkaTemplate;
-	private final AppKafkaProperties props;
-
-	public ProduceController(KafkaTemplate<String, String> kafkaTemplate, AppKafkaProperties props) {
-		this.kafkaTemplate = kafkaTemplate;
-		this.props = props;
-	}
-
 	@PostMapping("/send")
 	public SendResponse send(@RequestBody SendRequest req) {
 		String type = (req.type() == null || req.type().isBlank()) ? "UI_EVENT" : req.type();
@@ -31,11 +25,18 @@ public class ProduceController {
 		return new SendResponse(true, props.topic(), payload);
 	}
 
+	private final AppKafkaProperties props;
+
+	public ProduceController(KafkaTemplate<String, String> kafkaTemplate, AppKafkaProperties props) {
+		this.kafkaTemplate = kafkaTemplate;
+		this.props = props;
+	}
+
 	private String toJson(String type, String message) {
 		long ts = Instant.now().toEpochMilli();
-		// 아주 단순한 JSON (따옴표 escape 최소 처리)
+		String messageId = UUID.randomUUID().toString(); // UUID 생성
 		String safeMessage = message.replace("\\", "\\\\").replace("\"", "\\\"");
-		return "{\"type\":\"" + type + "\",\"message\":\"" + safeMessage + "\",\"ts\":" + ts + "}";
+		return "{\"messageId\":\"" + messageId + "\",\"type\":\"" + type + "\",\"message\":\"" + safeMessage + "\",\"ts\":" + ts + "}";
 	}
 
 	@GetMapping("/health")

@@ -57,7 +57,20 @@ services:
       SERVER_PORT: "8082"
     ports:
       - "8082:8082"
+  stream-app:
+    build:
+      context: ./stream-app
+      dockerfile: Dockerfile
+    depends_on:
+      - kafka
+    environment:
+      # stream-app이 컨테이너 안에서 Kafka로 붙을 때는 INTERNAL 리스너를 사용해야 함
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: "kafka:29092"
 
+      # stream-app이 웹서버를 띄운다면(Actuator/헬스체크 등) 포트 지정
+      SERVER_PORT: "8085"
+    ports:
+      - "8085:8085"
   ui:
     build:
       context: ./ui

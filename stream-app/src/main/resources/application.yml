@@ -1,0 +1,18 @@
+server:
+  port: 8085
+
+spring:
+  kafka:
+    # Streams 앱도 Kafka에 접속해야 하니까 필수. 컨테이너 내부에선 kafka:29092가 정답
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+
+    streams:
+      state-dir: /tmp/kafka-streams
+      application-id: demo-stream-app
+      properties:
+        # 지금 단계는 문자열로 처리하는 게 제일 단순함
+        default.key.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+        default.value.serde: org.apache.kafka.common.serialization.Serdes$StringSerde
+
+        # (선택) 개발 중엔 재시작할 때 상태 꼬임 줄이는 옵션
+        # commit.interval.ms: 1000
